@@ -1,0 +1,22 @@
+<template>
+    <template if:true={refinedData.length}>
+        <table border="1">
+            <thead>
+                <tr>
+                    <template for:each={tableHeaders} for:item="field">
+                        <th key={field}>{field}</th>
+                    </template>
+                </tr>
+            </thead>
+            <tbody>
+                <template for:each={tableData} for:item="row">
+                    <tr key={row.key}>
+                        <template for:each={row.values} for:item="value" for:index="i">
+                            <td key={row}>{value}</td>
+                        </template>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+    </template>
+</template>
