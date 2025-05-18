@@ -1,6 +1,5 @@
 import { api, LightningElement, track } from 'lwc';
-import getRecords from '@salesforce/apex/DataTableController.getRecords';
-
+import { apexUtils } from 'c/apexUtils';
 export default class DynamicDataTable extends LightningElement {
     @api selectedFields = []
     @api selectedObject;
@@ -13,17 +12,18 @@ export default class DynamicDataTable extends LightningElement {
 
     @api async getData() {
         console.log('selected fields from data table cmp --> ', JSON.stringify(this.selectedFields))
+        let response = {}
         try {
-            this.rawData = await getRecords({
-                objectName: this.selectedObject,
-                fields: this.selectedFields
-            })
+            response = await apexUtils.getData(this)
+            this.rawData = response.success ? response.data : []
             console.log('raw data from controller -->', JSON.stringify(this.rawData))
-            this.transformRawData()
+            if (this.rawData.length || this.rawData) {
+                this.transformRawData()
+            }
             this.error = undefined
         }
         catch (error) {
-            this.error = error
+            this.error = response.error
             this.rawData = undefined
         }
     }
@@ -51,13 +51,9 @@ export default class DynamicDataTable extends LightningElement {
         return this.refinedData.map(record => {
             return {
                 key: record.Id || Math.random().toString(36).substring(2),
-                values: this.selectedFields.map(field => this.checkIfValueIsObject(record[field]))
+                values: this.selectedFields.map(field => apexUtils.checkIfValueIsObject(record[field]))
             };
         });
-    }
-
-    checkIfValueIsObject(value) {
-        return value && typeof value === 'object' && !Array.isArray(value) ? (value.hasOwnProperty('street') ? value['street'] : null) : value
     }
 
     get tableHeaders() {

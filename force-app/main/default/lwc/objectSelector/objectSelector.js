@@ -1,6 +1,5 @@
 import { LightningElement, track } from 'lwc';
-import getAvailableObjects from '@salesforce/apex/DynamicObjectController.getAvailableObjects';
-import getFieldsForObject from '@salesforce/apex/DynamicObjectController.getFieldsForObject';
+import { apexUtils } from 'c/apexUtils';
 
 export default class ObjectSelector extends LightningElement {
   @track objectOptions = [];
@@ -11,14 +10,16 @@ export default class ObjectSelector extends LightningElement {
   }
 
   async loadObjects() {
+    let response = {}
     try {
-      const data = await getAvailableObjects();
+      response = await apexUtils.getAvailableObjects()
+      const data = response.success ? response.data : []
       this.objectOptions = data.map(obj => ({
         label: obj.label,
         value: obj.apiName
       }));
     } catch (error) {
-      console.error('Error loading objects', error);
+      console.error('Error loading objects', response.error);
     }
   }
 
@@ -26,9 +27,10 @@ export default class ObjectSelector extends LightningElement {
     this.selectedObject = event.detail.value;
     this.selectedFields = [];
     this.fieldOptions = [];
-
+    let response = {}
     try {
-      const fields = await getFieldsForObject({ objectApiName: this.selectedObject });
+      response = await apexUtils.getFieldsForObject(this)
+      const fields = response.success ? response.data : []
       this.fieldOptions = fields.map(field => ({
         label: field.label,
         value: field.apiName
