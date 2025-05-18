@@ -10,8 +10,14 @@
                 <c-object-selector onselectionchange={handleSelectionChange}>
                 </c-object-selector>
             </div>
-            <lightning-button variant="brand" label="Fetch data" onclick={handleDataFetch} class="slds-m-left_x-small"></lightning-button>
+            <div class="slds-col slds-size_1-of-1">
+                <lightning-button variant="brand" label="Fetch data" onclick={handleDataFetch}
+                    class="slds-p-left_x-small"></lightning-button>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-p-top_large">
+                <c-dynamic-data-table selected-object={selectedObject} selected-fields={selectedFields}
+                    field-options={fieldOptions} lwc:ref="childRef"></c-dynamic-data-table>
+            </div>
         </div>
-        <c-dynamic-data-table  selected-object={selectedObject} selected-fields={selectedFields} field-options={fieldOptions} lwc:ref="childRef"></c-dynamic-data-table>
     </div>
 </template>
