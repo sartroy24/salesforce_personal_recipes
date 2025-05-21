@@ -16,8 +16,16 @@
             </div>
             <div class="slds-col slds-size_1-of-1 slds-p-top_large">
                 <c-dynamic-data-table selected-object={selectedObject} selected-fields={selectedFields}
-                    field-options={fieldOptions} lwc:ref="childRef"></c-dynamic-data-table>
+                    final-table-data={dataAfterPageUpdate} field-options={fieldOptions} lwc:ref="childRef"
+                    ondataupdate={handleDataUpdate} start={start} end={end}></c-dynamic-data-table>
             </div>
+            <template lwc:if={showPagination}>
+                <div class="slds-col slds-size_1-of-1 slds-p-top_small">
+                    <c-pagination total-records={dataSize} page-size="10" onpagechange={handlePageChange}
+                        lwc:ref="paginationRef">
+                    </c-pagination>
+                </div>
+            </template>
         </div>
     </div>
 </template>

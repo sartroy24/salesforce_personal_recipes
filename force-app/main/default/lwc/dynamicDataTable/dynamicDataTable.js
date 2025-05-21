@@ -4,19 +4,47 @@ export default class DynamicDataTable extends LightningElement {
     @api selectedFields = []
     @api selectedObject;
     @api fieldOptions = [];
+    @api finalTableData = []
+    @api start;     //starting pos in table data
+    @api end;       //end pos in table data
     @track rawData = [];
     @track refinedData = [];
+    selectedFieldsTypeMap = []; //This contains the map of selected field and its type from Apex
     error;
     connectedCallback() {
+        //this.updatePaginationEvent();
     }
-
+    get tableData() {
+        return this.refinedData.map(record => {
+            return {
+                key: record.Id || Math.random().toString(36).substring(2),
+                values: this.selectedFields.map(field => apexUtils.checkIfValueIsObject(record[field]))
+            };
+        });
+    }
+    get tableHeaders() {
+        return this.selectedFields.map(field => {
+            let fields = []
+            this.fieldOptions.forEach(option => {
+                if (option.value === field) {
+                    fields.push(option.label)
+                }
+            })
+            return fields
+        })
+    }
+    // get finalData() {
+    //     this.tableData.slice(this.start, this.end)
+    // }
     @api async getData() {
         console.log('selected fields from data table cmp --> ', JSON.stringify(this.selectedFields))
         let response = {}
         try {
             response = await apexUtils.getData(this)
-            this.rawData = response.success ? response.data : []
+            this.rawData = response.success ? response.data.records : []
+            this.selectedFieldsTypeMap = response.success ? response.data.fieldsMap : []
             console.log('raw data from controller -->', JSON.stringify(this.rawData))
+            console.log('fields Type Map -->', JSON.stringify(this.selectedFieldsTypeMap))
             if (this.rawData.length || this.rawData) {
                 this.transformRawData()
             }
@@ -40,6 +68,7 @@ export default class DynamicDataTable extends LightningElement {
                 })
                 return normalised
             })
+            this.updateDataInParent()
             console.log('refined data -->', JSON.stringify(this.refinedData))
         }
         catch (error) {
@@ -47,24 +76,16 @@ export default class DynamicDataTable extends LightningElement {
         }
 
     }
-    get tableData() {
-        return this.refinedData.map(record => {
-            return {
-                key: record.Id || Math.random().toString(36).substring(2),
-                values: this.selectedFields.map(field => apexUtils.checkIfValueIsObject(record[field]))
-            };
+    updateDataInParent() {
+        const dataUpdate = new CustomEvent('dataupdate', {
+            detail: {
+                data: this.tableData
+            }
         });
+        this.dispatchEvent(dataUpdate)
     }
 
-    get tableHeaders() {
-        return this.selectedFields.map(field => {
-            let fields = []
-            this.fieldOptions.forEach(option => {
-                if (option.value === field) {
-                    fields.push(option.label)
-                }
-            })
-            return fields
-        })
+    get showTable(){
+        return this.finalTableData?.length > 0
     }
 }

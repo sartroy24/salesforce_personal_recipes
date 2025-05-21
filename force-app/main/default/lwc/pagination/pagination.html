@@ -1,0 +1,11 @@
+<template>
+    <div class="pagination-controls slds-align_absolute-center">
+        <lightning-button-icon icon-name="utility:chevronleft" variant="brand" onclick={handlePrevious}
+            alternative-text="previous" disabled={isFirstPage}>
+        </lightning-button-icon>
+        <span class="slds-m-around_xx-small">Page {currentPage} of {totalPages}</span>
+        <lightning-button-icon icon-name="utility:chevronright" variant="brand" onclick={handleNext}
+            alternative-text="next" disabled={isLastPage}>
+        </lightning-button-icon>
+    </div>
+</template>

@@ -1,5 +1,5 @@
 <template>
-    <template if:true={refinedData.length}>
+    <template if:true={showTable}>
         <table border="1">
             <thead>
                 <tr>
@@ -9,7 +9,7 @@
                 </tr>
             </thead>
             <tbody>
-                <template for:each={tableData} for:item="row">
+                <template for:each={finalTableData} for:item="row">
                     <tr key={row.key}>
                         <template for:each={row.values} for:item="value" for:index="i">
                             <td key={row}>{value}</td>

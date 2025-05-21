@@ -59,4 +59,8 @@ export default class ObjectSelector extends LightningElement {
     });
     this.dispatchEvent(selectionEvent);
   }
+
+  get showFieldOptions() {
+    return this.fieldOptions?.length > 0
+  }
 }

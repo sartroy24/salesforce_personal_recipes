@@ -11,7 +11,7 @@
         </div>
 
         <!-- Field Selection Dual Listbox -->
-        <template if:true={fieldOptions.length}>
+        <template if:true={showFieldOptions}>
             <div class="slds-grid slds-wrap slds-gutters">
                 <div class="slds-col slds-size_1-of-1">
                     <lightning-dual-listbox name="fieldSelector" label="Select Fields" source-label="Available Fields"
