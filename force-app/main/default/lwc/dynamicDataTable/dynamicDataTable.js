@@ -9,10 +9,22 @@ export default class DynamicDataTable extends LightningElement {
     @api end;       //end pos in table data
     @track rawData = [];
     @track refinedData = [];
+    @track tableHeaders = []
     selectedFieldsTypeMap = []; //This contains the map of selected field and its type from Apex
+    isAscending = false;
+    hasProcessed = false;
     error;
     connectedCallback() {
-        //this.updatePaginationEvent();
+        if (this.selectedFields?.length != 0 && this.selectedFields != undefined) {
+            console.log('selectedFields -->' + JSON.stringify(this.selectedFields))
+            this.computeTableHeaders()
+        }
+    }
+    renderedCallback() {
+        if (this.selectedFields && this.selectedFields.length > 0 && !this.hasProcessed) {
+            this.hasProcessed = true;
+            this.computeTableHeaders()
+        }
     }
     get tableData() {
         return this.refinedData.map(record => {
@@ -22,17 +34,19 @@ export default class DynamicDataTable extends LightningElement {
             };
         });
     }
-    get tableHeaders() {
-        return this.selectedFields.map(field => {
-            let fields = []
-            this.fieldOptions.forEach(option => {
-                if (option.value === field) {
-                    fields.push(option.label)
-                }
-            })
-            return fields
-        })
-    }
+    // get tableHeaders() {
+    //     let returnedFields = this.selectedFields.map(field => {
+    //         let fieldObj = {};
+    //         this.fieldOptions.forEach(option => {
+    //             if (option.value === field) {
+    //                 fieldObj = { name: option.label, isSorted: false }
+    //             }
+    //         })
+    //         return { ...fieldObj }
+    //     })
+    //     console.log('returnedFields ', JSON.stringify(returnedFields))
+    //     return returnedFields
+    // }
     // get finalData() {
     //     this.tableData.slice(this.start, this.end)
     // }
@@ -85,7 +99,37 @@ export default class DynamicDataTable extends LightningElement {
         this.dispatchEvent(dataUpdate)
     }
 
-    get showTable(){
+    get showTable() {
         return this.finalTableData?.length > 0
+    }
+
+    handleSort(event) {
+        let sorted_field = event.currentTarget.dataset.field
+        console.log('sorted field -->', sorted_field)
+        this.tableHeaders.forEach(field => {
+            if (field.name === sorted_field) {
+                console.log('true con')
+                field.isSorted = true
+            }
+            else{
+                field.isSorted = false
+            }
+        })
+        console.log('field options after sort', JSON.stringify(this.tableHeaders))
+        this.isAscending = !this.isAscending
+    }
+
+    computeTableHeaders() {
+        let returnedFields = this.selectedFields.map(field => {
+            let fieldObj = {};
+            this.fieldOptions.forEach(option => {
+                if (option.value === field) {
+                    fieldObj = { name: option.label, isSorted: false }
+                }
+            })
+            return { ...fieldObj }
+        })
+        console.log('returnedFields ', JSON.stringify(returnedFields))
+        this.tableHeaders = [...returnedFields]
     }
 }

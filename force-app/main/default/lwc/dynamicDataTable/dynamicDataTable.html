@@ -4,7 +4,15 @@
             <thead>
                 <tr>
                     <template for:each={tableHeaders} for:item="field">
-                        <th key={field}>{field}</th>
+                        <th key={field.name} data-field={field.name} onclick={handleSort} style="cursor: pointer;">
+                            {field.name}
+                            <template if:true={field.isSorted}>
+                                <span>
+                                    <template if:true={isAscending}>▲</template>
+                                    <template if:false={isAscending}>▼</template>
+                                </span>
+                            </template>
+                        </th>
                     </template>
                 </tr>
             </thead>
