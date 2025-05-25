@@ -1,4 +1,8 @@
 <template>
+    <template if:true={showSpinner}>
+        <lightning-spinner alternative-text="Loading" size="large">
+        </lightning-spinner>
+    </template>
     <template if:true={showTable}>
         <table border="1">
             <thead>
@@ -14,6 +18,9 @@
                             </template>
                         </th>
                     </template>
+                    <th>
+                        Actions
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -22,6 +29,17 @@
                         <template for:each={row.values} for:item="value" for:index="i">
                             <td key={row}>{value}</td>
                         </template>
+                        <td>
+                            <lightning-button-group data-id={row.key}>
+                                <!-- <lightning-button label="Refresh"></lightning-button> -->
+                                <lightning-button-icon variant="border-filled" title="edit" icon-name="utility:edit"
+                                    class="slds-m-around_xx-small" onclick={handleRowAction}
+                                    data-id={row.key}></lightning-button-icon>
+                                <lightning-button-icon variant="destructive" title="delete" icon-name="utility:delete"
+                                    class="slds-m-around_xx-small" onclick={handleRowAction}
+                                    data-id={row.key}></lightning-button-icon>
+                            </lightning-button-group>
+                        </td>
                     </tr>
                 </template>
             </tbody>

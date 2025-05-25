@@ -43,9 +43,10 @@ export default class ObjectSelector extends LightningElement {
 
   handleFieldChange(event) {
     this.selectedFields = event.detail.value;
-    this.selectedFields.forEach(element => {
-      console.log('field name -->' + element)
-    });
+    console.log('selected fields -->', JSON.stringify(this.selectedFields))
+    // this.selectedFields.forEach(element => {
+    //    console.log('field name -->' + element)
+    // });
     this.fireSelectionChange();
   }
 

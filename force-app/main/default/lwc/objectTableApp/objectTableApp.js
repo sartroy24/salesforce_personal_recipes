@@ -32,7 +32,8 @@ export default class ObjectTableApp extends LightningElement {
         this.selectedObject = event.detail.objectApiName
         this.selectedFields = event.detail.fieldApiNames
         this.fieldOptions = event.detail.fieldOptions
-        console.log('selectedFields--> ' + this.selectedFields)
+        console.log('fieldOptions', JSON.stringify(this.fieldOptions))
+        // console.log('selectedFields--> ' + this.selectedFields)
         this.receivedData = []
         if (this.paginationRef) {
             this.paginationRef.reset();
