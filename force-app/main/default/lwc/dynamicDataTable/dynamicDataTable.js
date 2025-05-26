@@ -1,6 +1,7 @@
 import { api, LightningElement, track } from 'lwc';
 import { apexUtils } from 'c/apexUtils';
 import EditRecordModal from 'c/editRecordModal';
+import { deleteRecord } from 'lightning/uiRecordApi';
 export default class DynamicDataTable extends LightningElement {
     @api selectedFields = []
     @api selectedObject;
@@ -27,6 +28,9 @@ export default class DynamicDataTable extends LightningElement {
             this.hasProcessed = true;
             this.computeTableHeaders()
         }
+    }
+    get showTable() {
+        return this.finalTableData?.length > 0
     }
     @api async getData() {
         // console.log('selected fields from data table cmp --> ', JSON.stringify(this.selectedFields))
@@ -79,10 +83,6 @@ export default class DynamicDataTable extends LightningElement {
             }
         });
         this.dispatchEvent(dataUpdate)
-    }
-
-    get showTable() {
-        return this.finalTableData?.length > 0
     }
 
     async handleSort(event) {
@@ -141,15 +141,13 @@ export default class DynamicDataTable extends LightningElement {
         let action = event.currentTarget.title
         this.rowId = event.currentTarget.dataset.id
         if (action == 'edit' && this.rowId) {
-            console.log('row Id ', this.rowId)
-            console.log('selected object -->', this.selectedObject)
-            console.log('selected fields -->', JSON.stringify(this.selectedFields))
             await this.handleEditClick()
         }
-        // console.log('action name', action)
-        // console.log('row Id ', this.rowId)
-        //let sorted_field = event.currentTarget.dataset.field
-
+        if (action == 'delete' && this.rowId) {
+            this.showSpinner = true
+            await this.deleteSelectedRecord(this)
+            await this.getData();
+        }
     }
 
     async handleEditClick() {
@@ -170,5 +168,16 @@ export default class DynamicDataTable extends LightningElement {
                 // Refresh logic
             }
         });
+    }
+    async deleteSelectedRecord() {
+        try {
+            await apexUtils.deleteSelectedRecord(this)            
+            await this.getData()
+            this.showSpinner = false
+            await apexUtils.generateToastMessages(this, 'Success', 'Record deleted', 'success');
+        } catch (error) {
+            this.showSpinner = false
+            await apexUtils.generateToastMessages(this, 'Error', error.body.message, 'error');
+        }
     }
 }

@@ -10,14 +10,18 @@
                 <c-object-selector onselectionchange={handleSelectionChange}>
                 </c-object-selector>
             </div>
-            <div class="slds-col slds-size_1-of-1">
+            <div class="slds-col slds-size_1-of-1 slds-m-left_medium">
                 <lightning-button variant="brand" label="Fetch data" onclick={handleDataFetch}
-                    class="slds-p-left_x-small"></lightning-button>
+                    class="slds-align_absolute-center" disabled={isBtnActive}></lightning-button>
             </div>
             <div class="slds-col slds-size_1-of-1 slds-p-top_large">
                 <c-dynamic-data-table selected-object={selectedObject} selected-fields={selectedFields}
                     final-table-data={dataAfterPageUpdate} field-options={fieldOptions} lwc:ref="childRef"
                     ondataupdate={handleDataUpdate} start={start} end={end}></c-dynamic-data-table>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-m-left_medium">
+                <lightning-button variant="brand-outline" label="Export Data" onclick={handleDataExport}
+                    class="slds-align_absolute-center" disabled={isExpBtnActive}></lightning-button>
             </div>
             <template lwc:if={showPagination}>
                 <div class="slds-col slds-size_1-of-1 slds-p-top_small">

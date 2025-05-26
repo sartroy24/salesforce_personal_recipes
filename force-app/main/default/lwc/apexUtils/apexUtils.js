@@ -1,6 +1,8 @@
 import getRecords from '@salesforce/apex/DataTableController.getRecords';
 import getAvailableObjects from '@salesforce/apex/DynamicObjectController.getAvailableObjects';
 import getFieldsForObject from '@salesforce/apex/DynamicObjectController.getFieldsForObject';
+import { deleteRecord } from 'lightning/uiRecordApi';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export const apexUtils = {
 
@@ -110,5 +112,61 @@ export const apexUtils = {
             }
             return isAsc ? -comparison : comparison;
         });
+    },
+    async deleteSelectedRecord(cmp) {
+        console.log('inside delete')
+        console.log('record Id in delete ', cmp.rowId)
+        try {
+            await deleteRecord(cmp.rowId)
+            console.log('after delete is clicked')
+            apexUtils.generateToastMessages(cmp, 'Success', 'Record deleted', 'success');
+        } catch (error) {
+            apexUtils.generateToastMessages(cmp, 'Error', error.body.message, 'error');
+        }
+    },
+    async generateToastMessages(cmp, title, message, variant) {
+        cmp.dispatchEvent(
+            new ShowToastEvent({
+                title: title,
+                message: message,
+                variant: variant
+            })
+        );
+    },
+    async exportData(headers, rowData) {
+        // Prepare a html table
+        let doc = '<table>';
+        // Add styles for the table
+        doc += '<style>';
+        doc += 'table, th, td {';
+        doc += '    border: 1px solid black;';
+        doc += '    border-collapse: collapse;';
+        doc += '}';
+        doc += '</style>';
+        // Add all the Table Headers
+        doc += '<tr>';
+        this.headers.forEach(element => {
+            doc += '<th>' + element + '</th>'
+        });
+        doc += '</tr>';
+        // Add the data rows
+        this.rowData.forEach(record => {
+            doc += '<tr>';
+            doc += '<th>' + record.Id + '</th>';
+            doc += '<th>' + record.FirstName + '</th>';
+            doc += '<th>' + record.LastName + '</th>';
+            doc += '<th>' + record.Email + '</th>';
+            doc += '</tr>';
+        });
+        doc += '</table>';
+        var element = 'data:application/vnd.ms-excel,' + encodeURIComponent(doc);
+        let downloadElement = document.createElement('a');
+        downloadElement.href = element;
+        downloadElement.target = '_self';
+        // use .csv as extension on below line if you want to export data as csv
+        downloadElement.download = 'ExportedFile.xls';
+        document.body.appendChild(downloadElement);
+        downloadElement.click();
     }
 }
+

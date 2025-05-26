@@ -7,6 +7,7 @@ export default class ObjectTableApp extends LightningElement {
     receivedData;
     dataAfterPageUpdate;
     childRef;
+    isBtnActive = true
     paginationRef;
     dataSize;
     page = 1;
@@ -32,6 +33,7 @@ export default class ObjectTableApp extends LightningElement {
         this.selectedObject = event.detail.objectApiName
         this.selectedFields = event.detail.fieldApiNames
         this.fieldOptions = event.detail.fieldOptions
+        this.isBtnActive = this.selectedObject != null && this.selectedFields.length > 0 ? false : true
         console.log('fieldOptions', JSON.stringify(this.fieldOptions))
         // console.log('selectedFields--> ' + this.selectedFields)
         this.receivedData = []
