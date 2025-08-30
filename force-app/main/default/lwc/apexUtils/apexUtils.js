@@ -133,7 +133,7 @@ export const apexUtils = {
             })
         );
     },
-    async exportData(headers, rowData) {
+    async exportData(headers, data) {
         // Prepare a html table
         let doc = '<table>';
         // Add styles for the table
@@ -145,17 +145,17 @@ export const apexUtils = {
         doc += '</style>';
         // Add all the Table Headers
         doc += '<tr>';
-        this.headers.forEach(element => {
-            doc += '<th>' + element + '</th>'
+        headers.forEach(element => {
+            doc += '<th>' + element.name + '</th>'
         });
         doc += '</tr>';
         // Add the data rows
-        this.rowData.forEach(record => {
+        data.forEach(record => {
+            console.log('record in export --> ', JSON.stringify(record))
             doc += '<tr>';
-            doc += '<th>' + record.Id + '</th>';
-            doc += '<th>' + record.FirstName + '</th>';
-            doc += '<th>' + record.LastName + '</th>';
-            doc += '<th>' + record.Email + '</th>';
+            headers.forEach(header => {
+                doc += '<th>' + record[header.apiName] + '</th>';
+            });
             doc += '</tr>';
         });
         doc += '</table>';
@@ -167,6 +167,25 @@ export const apexUtils = {
         downloadElement.download = 'ExportedFile.xls';
         document.body.appendChild(downloadElement);
         downloadElement.click();
+    },
+    async downloadExcel(headers, data) {
+        let csvFile = await apexUtils.convertDataToCsv(headers, data)
+        await apexUtils.createLinkForDownload(csvFile)
+    },
+    async convertDataToCsv(headers, data) {
+        let csvHeader = headers.map(header => header.name).join(',');
+        // let csvHeader = Object.keys(data[0]).toString()
+        let csvBody = data.map(item => Object.values(item).toString())
+        let csvFile = csvHeader+ "\n"+csvBody.join("\n")
+        return csvFile
+    },
+    async createLinkForDownload(csvFile){
+        const downLink = document.createElement("a");
+        downLink.href = "data:text/csv;charset=utf-8," + encodeURI(csvFile);
+        downLink.target = "_blank";
+        downLink.download = "Record_data.csv";
+        //document.body.appendChild(downLink);
+        downLink.click();
     }
 }
 

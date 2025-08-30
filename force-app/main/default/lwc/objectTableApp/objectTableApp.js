@@ -1,10 +1,12 @@
 import { LightningElement, track } from 'lwc';
-
+import { apexUtils } from 'c/apexUtils';
 export default class ObjectTableApp extends LightningElement {
     selectedObject;
     @track selectedFields;
     @track fieldOptions;
     receivedData;
+    tableHeaders;
+    dataForExport;
     dataAfterPageUpdate;
     childRef;
     isBtnActive = true
@@ -21,9 +23,13 @@ export default class ObjectTableApp extends LightningElement {
         // This hook ensures the childRef is assigned after rendering
         this.childRef = this.refs.childRef;
         this.paginationRef = this.refs.paginationRef;
-
     }
-
+    get showPagination() {
+        return this.receivedData?.length > 0
+    }
+    get isExpBtnActive() {
+        return !this.showPagination
+    }
     handleDataFetch() {
         if (this.childRef) {
             this.childRef.getData();
@@ -43,6 +49,8 @@ export default class ObjectTableApp extends LightningElement {
     }
     handleDataUpdate(event) {
         this.receivedData = event.detail.data
+        this.tableHeaders = event.detail.headers
+        this.dataForExport = event.detail.dataForExport
         this.dataSize = this.receivedData.length
         this.updateVisibleData();
     }
@@ -56,7 +64,7 @@ export default class ObjectTableApp extends LightningElement {
         this.end = this.page * this.pageSize;
         this.dataAfterPageUpdate = this.receivedData?.slice(this.start, this.end);
     }
-    get showPagination() {
-        return this.receivedData?.length > 0
+    async handleDataExport(){
+        await apexUtils.downloadExcel(this.tableHeaders, this.dataForExport)
     }
 }

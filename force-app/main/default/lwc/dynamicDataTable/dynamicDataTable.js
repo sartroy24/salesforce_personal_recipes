@@ -1,7 +1,6 @@
 import { api, LightningElement, track } from 'lwc';
 import { apexUtils } from 'c/apexUtils';
 import EditRecordModal from 'c/editRecordModal';
-import { deleteRecord } from 'lightning/uiRecordApi';
 export default class DynamicDataTable extends LightningElement {
     @api selectedFields = []
     @api selectedObject;
@@ -79,7 +78,9 @@ export default class DynamicDataTable extends LightningElement {
         await this.updateTableData()
         const dataUpdate = new CustomEvent('dataupdate', {
             detail: {
-                data: this.tableData
+                data: this.tableData,
+                headers: this.tableHeaders,
+                dataForExport: this.refinedData
             }
         });
         this.dispatchEvent(dataUpdate)
@@ -106,7 +107,7 @@ export default class DynamicDataTable extends LightningElement {
             let fieldObj = {};
             this.fieldOptions.forEach(option => {
                 if (option.value === field) {
-                    fieldObj = { name: option.label, isSorted: false }
+                    fieldObj = { name: option.label, apiName: option.value, isSorted: false }
                 }
             })
             return { ...fieldObj }
