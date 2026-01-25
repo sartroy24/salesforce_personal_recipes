@@ -16,9 +16,7 @@ export const apexUtils = {
             response.success = false
             response.error = error
         }
-        finally {
-            return response
-        }
+        return response
     },
 
     checkIfValueIsObject(value) {
@@ -35,9 +33,7 @@ export const apexUtils = {
             response.success = false
             response.error = error
         }
-        finally {
-            return response
-        }
+        return response
     },
 
     async getFieldsForObject(cmp) {
@@ -50,9 +46,7 @@ export const apexUtils = {
             response.success = false
             response.error = error
         }
-        finally {
-            return response
-        }
+        return response
     },
 
     async apexToJsFieldTypeMap() {
@@ -188,4 +182,3 @@ export const apexUtils = {
         downLink.click();
     }
 }
-

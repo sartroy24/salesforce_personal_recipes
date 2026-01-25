@@ -37,8 +37,9 @@ export default class DynamicDataTable extends LightningElement {
         this.showSpinner = true
         try {
             response = await apexUtils.getData(this)
-            this.rawData = response.success ? response.data.records : []
-            this.selectedFieldsTypeMap = response.success ? response.data.fieldsMap : []
+            console.log('response from controller -->', JSON.stringify(response))
+            this.rawData = response.success ? response.data : []
+            //this.selectedFieldsTypeMap = response.success ? response.data.fieldsMap : []
             console.log('raw data from controller -->', JSON.stringify(this.rawData))
             console.log('fields Type Map -->', JSON.stringify(this.selectedFieldsTypeMap))
             await this.computeTableHeaders()
