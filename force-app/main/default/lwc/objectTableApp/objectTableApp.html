@@ -10,8 +10,26 @@
                 <c-object-selector onselectionchange={handleSelectionChange}>
                 </c-object-selector>
             </div>
-            <lightning-button variant="brand" label="Fetch data" onclick={handleDataFetch} class="slds-m-left_x-small"></lightning-button>
+            <div class="slds-col slds-size_1-of-1 slds-m-left_medium">
+                <lightning-button variant="brand" label="Fetch data" onclick={handleDataFetch}
+                    class="slds-align_absolute-center" disabled={isBtnActive}></lightning-button>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-p-top_large">
+                <c-dynamic-data-table selected-object={selectedObject} selected-fields={selectedFields}
+                    final-table-data={dataAfterPageUpdate} field-options={fieldOptions} lwc:ref="childRef"
+                    ondataupdate={handleDataUpdate} start={start} end={end}></c-dynamic-data-table>
+            </div>
+            <template lwc:if={showPagination}>
+                <div class="slds-col slds-size_1-of-1 slds-p-top_small">
+                    <c-pagination total-records={dataSize} page-size="10" onpagechange={handlePageChange}
+                        lwc:ref="paginationRef">
+                    </c-pagination>
+                </div>
+                <div class="slds-col slds-size_1-of-1">
+                    <lightning-button variant="brand-outline" label="Export Data" onclick={handleDataExport}
+                        class="slds-float_left" disabled={isExpBtnActive}></lightning-button>
+                </div>
+            </template>
         </div>
-        <c-dynamic-data-table  selected-object={selectedObject} selected-fields={selectedFields} field-options={fieldOptions} lwc:ref="childRef"></c-dynamic-data-table>
     </div>
 </template>

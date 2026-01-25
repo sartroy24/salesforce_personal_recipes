@@ -1,19 +1,45 @@
 <template>
-    <template if:true={refinedData.length}>
+    <template if:true={showSpinner}>
+        <lightning-spinner alternative-text="Loading" size="large">
+        </lightning-spinner>
+    </template>
+    <template if:true={showTable}>
         <table border="1">
             <thead>
                 <tr>
                     <template for:each={tableHeaders} for:item="field">
-                        <th key={field}>{field}</th>
+                        <th key={field.name} data-field={field.name} onclick={handleSort} style="cursor: pointer;">
+                            {field.name}
+                            <template if:true={field.isSorted}>
+                                <span>
+                                    <template if:true={isAscending}>▲</template>
+                                    <template if:false={isAscending}>▼</template>
+                                </span>
+                            </template>
+                        </th>
                     </template>
+                    <th>
+                        Actions
+                    </th>
                 </tr>
             </thead>
             <tbody>
-                <template for:each={tableData} for:item="row">
+                <template for:each={finalTableData} for:item="row">
                     <tr key={row.key}>
                         <template for:each={row.values} for:item="value" for:index="i">
                             <td key={row}>{value}</td>
                         </template>
+                        <td>
+                            <lightning-button-group data-id={row.key}>
+                                <!-- <lightning-button label="Refresh"></lightning-button> -->
+                                <lightning-button-icon variant="border-filled" title="edit" icon-name="utility:edit"
+                                    class="slds-m-around_xx-small" onclick={handleRowAction}
+                                    data-id={row.key}></lightning-button-icon>
+                                <lightning-button-icon variant="destructive" title="delete" icon-name="utility:delete"
+                                    class="slds-m-around_xx-small" onclick={handleRowAction}
+                                    data-id={row.key}></lightning-button-icon>
+                            </lightning-button-group>
+                        </td>
                     </tr>
                 </template>
             </tbody>
