@@ -1,0 +1,31 @@
+# Welcome to Altair GraphQL Client.
+# You can send your request using CmdOrCtrl + Enter.
+
+# Enter your graphQL query here.
+query getAccounts {
+  uiapi {
+    query{
+      Account(
+        first: 10, 
+        orderBy : { AnnualRevenue : { order: ASC } ,
+                    Name : { order: ASC }}
+        where : { Name : { like: "%oil%" }, 
+                AnnualRevenue: {gt: 20000 }}
+      ) 
+        {
+        edges{
+          node{
+            Id
+            Name {
+              value
+            }
+            AnnualRevenue{
+              value
+              displayValue
+            }
+          }
+        }
+      }
+    }
+  }
+}
