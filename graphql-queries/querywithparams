@@ -1,0 +1,47 @@
+# Welcome to Altair GraphQL Client.
+# You can send your request using CmdOrCtrl + Enter.
+
+# Enter your graphQL query here.
+query getAccounts(
+  $limit: Int,
+  $likeParam: String,
+  $revenue: Currency
+) {
+  uiapi {
+    query{
+      Account(
+        after: null
+        first: $limit, 
+        orderBy : { AnnualRevenue : { order: ASC } ,
+                    Name : { order: ASC }}
+        where : { 
+              or:  [
+                { Name : { like: $likeParam } }, 
+                { AnnualRevenue: {gt: $revenue } }
+            ]
+          }
+        ) 
+        {
+        edges{
+          node{
+            Id
+            Name {
+              value
+            }
+            AnnualRevenue{
+              value
+              displayValue
+            }
+          }
+        }
+          totalCount
+          pageInfo {
+            hasNextPage
+            hasPreviousPage
+            endCursor
+            startCursor
+          }
+      }
+    }
+  }
+}
