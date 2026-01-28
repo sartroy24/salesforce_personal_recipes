@@ -1,0 +1,37 @@
+query getAnnualRevenue{
+  uiapi{
+    aggregate{
+      Account(groupBy : {
+        Industry : { group: true},
+         Type: {group: true } }  ) 
+      {
+        edges{
+          node{
+            aggregate{
+              Industry{
+                value
+              }
+              Type{
+                value
+              }
+              AnnualRevenue {
+                sum{
+                  value
+                }
+                min{
+                  value
+                }
+                max{
+                  value
+                }
+                avg{
+                  value
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+
+//SOQL Query:
+
+// SSelect Id , Name, Email, Account.Name, Account.Rating, Account.AnnualRevenue, (SELECT Id, CaseNumber FROM Cases) FROM Contact 
+
+
+query getContactsWithAccount{
+  uiapi{
+    query {
+      Contact(first: 5) {
+        edges {
+          node {
+            Id
+            Name {
+              value
+            }
+            Email {
+              value
+            }
+            Cases {
+              edges {
+                node {
+                  Id
+                  CaseNumber {
+                    value
+                  }
+                }
+              }
+            }
+            Account {
+              Name {
+                value
+              }
+              AnnualRevenue {
+                value
+                displayValue
+              }
+              Rating {
+                value
+              }
+            }
+          }
+        }
+        totalCount
+      }
+    }
+  }
+}
