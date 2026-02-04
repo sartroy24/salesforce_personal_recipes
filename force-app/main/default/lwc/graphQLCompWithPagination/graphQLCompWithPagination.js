@@ -7,7 +7,9 @@ export default class GraphQLCompWithPagination extends LightningElement {
     columns = [];
     searchValue = 'test';
     after = null;
-    pageInfo = null
+    pageInfo = null;
+    pageNumber = 1;
+    totalCount = 0;
 
     get variables() {
         return {
@@ -17,19 +19,30 @@ export default class GraphQLCompWithPagination extends LightningElement {
         }
     }
 
+    get totalPages() {
+        return Math.ceil(this.totalCount / 5);
+    }
+
+    get isDisabled(){
+        return this.totalCount === 0 || this.pageNumber === this.totalPages
+    }
+
     @wire(graphql, {
         query: gql`
             query getAccounts(
-                $limit: Int,
-                $after: String
+                $limit: Int,                
+                $after: String,
+                $likeParams: String
             ) {
                 uiapi {
                     query{
                     Account(
                         first: $limit,
                         orderBy: { Name: { order: ASC }},
-                        after: $after
-              
+                        where: {
+                            Name: { like:  $likeParams }
+                        }
+                        after: $after              
                         ){    
                         edges {
                         node {  
@@ -65,6 +78,7 @@ export default class GraphQLCompWithPagination extends LightningElement {
         if (data) {
             console.log("Data: ", JSON.stringify(data));
             this.pageInfo = data.uiapi.query?.Account?.pageInfo;
+            this.totalCount = data.uiapi.query?.Account?.totalCount;
             this.records = data.uiapi.query?.Account?.edges.map(edge => {
                 const nodeObj = edge.node
                 const flatObj = {};
@@ -109,9 +123,11 @@ export default class GraphQLCompWithPagination extends LightningElement {
         event.preventDefault();
         console.log('page info --> ', JSON.stringify(this.pageInfo))
         if (this.pageInfo && this.pageInfo.hasNextPage) {
-            this.after = this.pageInfo.endCursor;    
+            this.after = this.pageInfo.endCursor;
+            this.pageNumber++;    
         } else {
             this.after = null
+            this.pageNumber = 1;
         }
     }
 }

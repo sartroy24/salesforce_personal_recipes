@@ -10,9 +10,13 @@
         <div class="slds-m-around_large">
             <lightning-datatable key-field="Id" data={records} columns={columns}>                
             </lightning-datatable>
+            <p class="slds-text-align_centre" lwc:if = {totalCount}>
+                {pageNumber} of {totalPages} Page and has a total Count of {totalCount}
+            </p>
         </div>
         <div class="slds-m-around_large">
-            <lightning-button variant="brand" icon-name="utility:chevronright"   label="Next" onclick={handleNext}></lightning-button>
+            <lightning-button variant="brand" icon-name="action:reset_password" label="Reset" onclick={handleReset}></lightning-button>
+            <lightning-button variant="brand" icon-name="utility:chevronright" label="Next" disabled={isDisabled} onclick={handleNext}></lightning-button>
         </div>
     </lightning-card>
 </template>
