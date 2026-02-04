@@ -1,0 +1,18 @@
+<template>
+    <div class="slds-m-around_large">
+        <lightning-input type="search" 
+                         placeholder="search accounts with name"
+                         label="Search Accounts"
+                         onchange={handleChange}>
+        </lightning-input>
+    </div>
+    <lightning-card title="Graph QL" icon-name="custom:custom55">
+        <div class="slds-m-around_large">
+            <lightning-datatable key-field="Id" data={records} columns={columns}>                
+            </lightning-datatable>
+        </div>
+        <div class="slds-m-around_large">
+            <lightning-button variant="brand" icon-name="utility:chevronright"   label="Next" onclick={handleNext}></lightning-button>
+        </div>
+    </lightning-card>
+</template>

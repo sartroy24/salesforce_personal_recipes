@@ -1,7 +1,10 @@
+//Query: Select SUM(AnnualRevenue), Industry, Type From Account Group By Industry, Type
+
+
 query getAnnualRevenue{
   uiapi{
     aggregate{
-      Account(groupBy : {
+      Account (groupBy : {
         Industry : { group: true},
          Type: {group: true } }  ) 
       {
